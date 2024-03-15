@@ -19,7 +19,6 @@ export function Counter({
   className,
   max,
   product,
-  myNum
 }: CounterProps) {
   // const productInBasket = useSelector((state) => state.buyerCart.find((x) => x.id == product.id))
   const [count, setCount] = useState<number>(defaultCount || 0);
@@ -71,12 +70,7 @@ export function Counter({
     }
   }
 
-  const [myNumState, setMyNumState] = useState(myNum || 0)
 
-  function myClick() {
-    setMyNumState(prev => prev + 1)
-    console.log('myNumState', myNumState)
-  }
 
   return (
     <div className={cn(styles['counter'], className)}>
@@ -91,9 +85,6 @@ export function Counter({
 
       <button onClick={handleIncrement} className={styles['counter__button']}>
         <PlusIcon />
-      </button>
-      <button onClick={myClick}>
-        MYPLUS - {myNumState}
       </button>
     </div>
   );

@@ -15,6 +15,18 @@ import { useSelector } from '@/hooks/useSelector';
 
 import Link from 'next/link';
 
+const products = {
+  id: 32,
+  image: 'string',
+  title: 'string',
+  shop: 'string',
+  weight: 'string',
+  count: 2,
+  price: 'string',
+  perPiece: 'string',
+  inStock: 2,
+};
+
 export function ProductCard({ product }: ProductCardProps) {
   const productInBasket = useSelector((state) => state.buyerCart.find((x) => x.id == product.id));
 
@@ -62,7 +74,6 @@ export function ProductCard({ product }: ProductCardProps) {
     );
   };
 
-  const myNum1 = 1
 
   const _renderPaymentMethods = ({ methods }: Pick<Product, 'methods'>) => {
     /**
@@ -132,7 +143,7 @@ export function ProductCard({ product }: ProductCardProps) {
           </button>
         ) : (
           <Counter
-          myNum={counter}
+          product={products}
             max={product.inStock}
             defaultCount={counter}
             increment={handleSaveToCart}

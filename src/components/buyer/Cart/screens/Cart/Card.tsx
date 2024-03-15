@@ -16,6 +16,18 @@ import { createRef } from 'react';
 import { cartActions } from '@/store/slices/buyer/cart.slice';
 import { useDispatch } from '@/hooks/useDispatch';
 
+const products = {
+  id: 32,
+  image: 'string',
+  title: 'string',
+  shop: 'string',
+  weight: 'string',
+  count: 2,
+  price: 'string',
+  perPiece: 'string',
+  inStock: 2,
+};
+
 export function Card({ product, onBuy }: CardProps) {
   const dispatch = useDispatch();
 
@@ -47,6 +59,7 @@ export function Card({ product, onBuy }: CardProps) {
 
         <div className={styles['card__info']}>
           <Counter
+          product={products}
             decrement={handleDecrement}
             increment={handleIncrement}
             defaultCount={product.count}

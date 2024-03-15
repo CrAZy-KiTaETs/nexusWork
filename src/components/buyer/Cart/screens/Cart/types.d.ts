@@ -9,8 +9,17 @@ export interface CounterProps {
   decrement?: (count: number) => void;
   className?: string;
   max?: number;
-  product: Product;
-  myNum:number;
+  product: {
+    id?: number;
+    image: string;
+    title: string;
+    shop: string;
+    weight: string;
+    count: number;
+    price: string;
+    perPiece: string;
+    inStock: number;
+  };
 }
 
 export interface Product {

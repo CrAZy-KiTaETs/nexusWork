@@ -1,10 +1,14 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 interface BuyerCartState {
-  id: number;
-  count: number;
+  id?: number;
+  image: string;
   title: string;
+  shop: string;
+  weight: string;
+  count: number;
   price: string;
+  perPiece: string;
   inStock: number;
 }
 

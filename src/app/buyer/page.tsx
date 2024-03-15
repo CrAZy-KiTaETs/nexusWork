@@ -107,11 +107,11 @@ const Home = () => {
         </nav>
 
         <div className={styles['header__filters']}>
-          <Field
+          {/* <Field
             containerClassName={styles['header__filters-search']}
             leftIcon={<SearchIcon />}
             placeholder='Поиск'
-          />
+          /> */}
 
           <div className={styles['header__filters-button']}>
             <FilterIcon />
@@ -163,14 +163,5 @@ const Home = () => {
   );
 }
 
-export async function getSercerSideProps() {
-  const res = await fetch('https://jsonplaceholder.typicode.com/posts')
-  const data = await res.json()
-  return {
-    props: {
-      data
-    }
-  }
-}
 
 export default Home

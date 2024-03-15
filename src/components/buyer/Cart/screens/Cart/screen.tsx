@@ -13,7 +13,7 @@ import { ArrowLeftIcon } from '@/assets/icons/ArrowLeft';
 import { ArrowRightIcon } from '@/assets/icons/ArrowRight';
 
 // Types
-import type { CartScreenProps } from './types';
+import type { CartScreenProps, Product } from './types';
 import { useSelector } from '@/hooks/useSelector';
 import { useEffect, useState } from 'react';
 
@@ -32,7 +32,7 @@ export function CartScreen({ onSubmit, onBack }: CartScreenProps) {
 
   const dispatch = useDispatch()
 
-  function deleteItem(product) {
+  function deleteItem(product: Product) {
     dispatch(
       cartActions.removeFromCart({
         id: product.id,
