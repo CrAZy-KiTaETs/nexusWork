@@ -125,9 +125,10 @@ const Home = () => {
         throw new Error('Ошибка получения данных о продуктах');
       }
       const dataItems = await items.json();
+      localStorage.setItem('products', JSON.stringify(dataItems))
       const dataSubcategories = await subcategories.json();
       // setOnlyCategory([...new Set(dataItems.map((product) => product.subcategory.name))]);
-     
+
       // Если в СТОРЕДЖЕ была активная категория
       if (activeCategory) {
         // Фильтрует по категории
@@ -142,7 +143,7 @@ const Home = () => {
         setFiltredProducts(dataItems);
         setSelectedSwitchbar(activeCategory);
       }
-      setOnlyCategory(dataSubcategories.map(x => x.name)); // Записываем название категорий/подкатегорий
+      setOnlyCategory(dataSubcategories.map((x) => x.name)); // Записываем название категорий/подкатегорий
       setMyProducts(dataItems); // Записываем данные в переменную
       console.log('Полученные данные с API', dataItems);
     } catch (error) {

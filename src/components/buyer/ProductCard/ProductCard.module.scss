@@ -251,6 +251,11 @@
     }
   }
 
+  .acitve {
+    background-color: red !important;
+  }
+
+
   &__cart-counter {
     grid-area: 2/2;
   }

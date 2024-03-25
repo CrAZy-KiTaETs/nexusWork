@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { load } from '@2gis/mapgl';
-
-const address = ["Еражнова, 43", "​Проспект Бухар-жырау, 50/1", "Проспект Бухар-жырау, 25/1"]
+import { load } from '@2gis/mapgl'
 
 function MyMap({ addresses }) {
   const [mapLoaded, setMapLoaded] = useState(false);
@@ -19,13 +17,20 @@ function MyMap({ addresses }) {
         });
 
 
-        address.forEach(address => {
+        addresses.forEach((address, id) => {
           fetch(`https://catalog.api.2gis.com/3.0/items/geocode?q=Караганда, ${address}&fields=items.point&key=d48d4ff2-411b-400c-ad13-4e538e8acda7`)
             .then(response => response.json())
             .then(data => {
               console.log('DATA', data)
-              const coordinates = data.result.items[0].point;
-              new mapglAPI.Marker(map, { coordinates });
+              const info = data.result.items[0]
+              new mapgl.Marker(map, {
+                coordinates: [info.point.lon, info.point.lat],
+                label: {
+                  text: info.name
+                }
+              })
+              // const coordinates = data.result.items[0].point;
+              // new mapglAPI.Marker(map, { coordinates });
             })
             .catch(error => console.error('Error geocoding address:', address, error));
         });

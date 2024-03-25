@@ -28,11 +28,27 @@ import { Field } from '../Field';
 import { CartModal } from '../Cart';
 import { useSelector } from '@/hooks/useSelector';
 
+let URL = 'http://127.0.0.1:8000/api/v1';
+const key =
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJ1c2VyIjp7ImVtYWlsIjoickByLmNvbSIsInBob25lIjoiNzc3NzUxODc1MDEiLCJpZCI6IjEifX0.9l-B_e4JNSa8IKDren_e11ONeUVCkY33kyhSaplOjaM';
+
 export function Layout({ children }: LayoutProps) {
   const router = useRouter();
 
   const [cartSize, setCartSize] = useState(0);
   const products = useSelector((state) => state.buyerCart);
+
+  const getAmount = async () => {
+    const amount = await fetch(`${URL}/carts`, {
+      headers: {
+        Authorization: key,
+      },
+    });
+    const data = await amount.json();
+    let size = 0;
+    data.items.forEach((product) => (size = size + product.amount));
+    setCartSize(size);
+  };
 
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
   const [isCartOpen, setIsCartOpen] = useState<boolean>(false);
@@ -48,10 +64,8 @@ export function Layout({ children }: LayoutProps) {
   }
 
   useEffect(() => {
-    let size = 0;
-    products.forEach((product) => (size = size + product.count));
-
-    setCartSize(size);
+    // products.forEach((product) => (size = size + product.count));
+    getAmount();
   }, [products, cartSize]);
 
   return (

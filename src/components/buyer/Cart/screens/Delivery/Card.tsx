@@ -15,7 +15,7 @@ export function Card({ byCourier = false, title }: CardProps) {
   return (
     <label htmlFor={id} className={styles['card']}>
       <div className={styles['card__checkbox']}>
-        <input type='checkbox' id={id} />
+        <input type='radio' name='point' id={id} />
       </div>
 
       <p className={styles['card__title']}>{title}</p>

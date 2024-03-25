@@ -1,7 +1,7 @@
 'use client';
 
 import cn from 'classnames';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { CounterProps } from './types';
 import { useDispatch } from '@/hooks/useDispatch';
 import { cartActions } from '@/store/slices/buyer/cart.slice';
@@ -12,6 +12,10 @@ import { PlusIcon } from '@/assets/icons/Plus';
 import TrashIcon from '@/assets/icons/trash.svg';
 import styles from './Counter.module.scss';
 
+let URL = 'http://127.0.0.1:8000/api/v1';
+const key =
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJ1c2VyIjp7ImVtYWlsIjoickByLmNvbSIsInBob25lIjoiNzc3NzUxODc1MDEiLCJpZCI6IjEifX0.9l-B_e4JNSa8IKDren_e11ONeUVCkY33kyhSaplOjaM';
+
 export function Counter({
   defaultCount,
   increment,
@@ -20,16 +24,53 @@ export function Counter({
   max,
   product,
 }: CounterProps) {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  let runOnce = false;
   // const productInBasket = useSelector((state) => state.buyerCart.find((x) => x.id == product.id))
   const [count, setCount] = useState<number>(defaultCount || 0);
   const dispatch = useDispatch();
-  const lol = useSelector(state => state.buyerCart)
+  const lol = useSelector((state) => state.buyerCart);
+  const [amounFromBack, setAbountFromBasket] = useState();
+
+  const getAmount = async () => {
+    const amount = await fetch(`${URL}/carts`, {
+      headers: {
+        Authorization: key,
+      },
+    });
+    const data = await amount.json();
+    const thisProduct = data.items.find((x) => x.item.id === product.id);
+    setCount(thisProduct.amount);
+    // console.log('ЭТО ТОВАРЫ КОРЗИНЫ СЕРВЕРА', thisProduct);
+  };
 
   function handleIncrement() {
-    setCount((prev) => (prev === max ? max : prev + 1));
+    const newCount = count === 5 ? 5 : count + 1;
 
-    console.log(lol,'lool')
+    // console.log('ЧТО ЗА ПРОДУКТ ПРИХОДИТ В КАУНТЕР', product);
+    setCount(newCount);
+    sendDataToAPI({ item: product.id, amount: newCount });
+    // console.log('НАЖАТИЕ НА +', lol);
     if (increment) increment(count);
+
+    dispatch(
+      cartActions.addToCart({
+        id: product.id,
+      }),
+    );
 
     /*
     ДОбавляем продукт с его отдельной страницы
@@ -42,9 +83,17 @@ export function Counter({
     */
   }
 
+  useEffect(() => {
+    getAmount();
+    runOnce = true;
+  }, [runOnce]);
 
   function handleDecrement() {
-    setCount((prev) => (prev === 0 ? prev : prev - 1)); // было 1 вместо 0
+    const newCount = count === 0 ? 0 : count - 1;
+
+    setCount(newCount); // было 1 вместо 0
+    sendDataToAPI({ item: product.id, amount: newCount });
+
     if (decrement) decrement(count);
     //ниже кода не было
     // console.log(product)
@@ -61,16 +110,32 @@ export function Counter({
       dispatch(
         cartActions.addToCart({
           id: product.id,
-          count: count,
-          inStock: product.inStock,
-          price: product.price,
-          title: product.title,
         }),
       );
     }
   }
 
+  const sendDataToAPI = async (dataArray) => {
+    try {
+      const response = await fetch(`${URL}/carts/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: key,
+          // Добавьте любые другие необходимые заголовки, например, авторизацию
+        },
+        body: JSON.stringify(dataArray),
+      });
 
+      if (!response.ok) {
+        throw new Error('Ошибка отправки данных на сервер');
+      }
+
+      // console.log('Данные успешно отправлены на сервер');
+    } catch (error) {
+      console.error('Ошибка:', error.message);
+    }
+  };
 
   return (
     <div className={cn(styles['counter'], className)}>

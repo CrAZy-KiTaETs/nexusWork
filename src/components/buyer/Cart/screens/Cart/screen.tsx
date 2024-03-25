@@ -19,21 +19,55 @@ import { ArrowRightIcon } from '@/assets/icons/ArrowRight';
 import type { CartScreenProps, Product } from './types';
 import { useSelector } from '@/hooks/useSelector';
 import { useEffect, useState } from 'react';
+let URL = 'http://127.0.0.1:8000/api/v1';
+const key =
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJ1c2VyIjp7ImVtYWlsIjoickByLmNvbSIsInBob25lIjoiNzc3NzUxODc1MDEiLCJpZCI6IjEifX0.9l-B_e4JNSa8IKDren_e11ONeUVCkY33kyhSaplOjaM';
 
 export function CartScreen({ onSubmit, onBack }: CartScreenProps) {
   const [cartSize, setCartSize] = useState(0);
 
-  const products = useSelector((state) => state.buyerCart);
+  // const products = useSelector((state) => state.buyerCart);
+
+  const [products, setProducts] = useState();
+  const [inStock, setInStock] = useState([]);
+
+  const getAmount = async () => {
+    const amount = await fetch(`${URL}/carts`, {
+      headers: {
+        Authorization: key,
+      },
+    });
+    const data = await amount.json();
+    //Счетчик товаров в корзине
+    let size = 0;
+    data.items.forEach((product) => (size = size + product.amount));
+    setCartSize(size);
+    const local = JSON.parse(localStorage.getItem('products'));
+    const productsId = data.items.map((x) => x.item.id);
+    const cart = local.filter((x) => productsId.includes(x.id));
+    setProducts(cart);
+    // cart.forEach((x, id) => {
+    //   getStock(id)
+    // });
+
+  };
+
+  // const getStock = async (id) => {
+  //     const stock = await fetch(`${URL}/stock/${id}`, {
+  //       headers: {
+  //         Authorization: key,
+  //       },
+  //     });
+  //     const data = await stock.json()
+  //     setInStock(prev => [...prev, data.stock[0].amount])
+  //     console.log(data, "DATA2222")
+  // }
 
   useEffect(() => {
-    let size = 0;
+    getAmount();
+  }, [cartSize]);
 
-    products.forEach((product) => (size = size + product.count));
-    console.log(products, ' useEffect')
-    setCartSize(size);
-  }, [products, cartSize]);
-
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
 
   function deleteItem(product: Product) {
     dispatch(
@@ -45,7 +79,7 @@ export function CartScreen({ onSubmit, onBack }: CartScreenProps) {
 
   return (
     <>
-      <div className={styles['mobile']}>
+      {/* <div className={styles['mobile']}>
         <header className={styles['header']}>
           <button onClick={onBack} className={styles['header__back-button']}>
             <ArrowLeftIcon />
@@ -84,7 +118,7 @@ export function CartScreen({ onSubmit, onBack }: CartScreenProps) {
             </span>
           </button>
         )}
-      </div>
+      </div> */}
 
       <div className={styles['desktop']}>
         <header className={styles['header']}>
@@ -110,62 +144,73 @@ export function CartScreen({ onSubmit, onBack }: CartScreenProps) {
         <div className={styles['table-wrapper']}>
           <table className={styles['table']}>
             <tbody className={styles['table__body']}>
-              {products.map((index) => (
-                <tr key={index.id} className={styles['table__row']}>
-                  <td className={styles['table__data']}>
-                    <div className={styles['product']}>
-                      <input type='checkbox' className={styles['product__checkbox']} />
-                    </div>
-                  </td>
+              {products ? (
+                <>
+                  {products?.map((index) => (
+                    <tr key={index.id} className={styles['table__row']}>
+                      <td className={styles['table__data']}>
+                        <div className={styles['product']}>
+                          <input type='checkbox' className={styles['product__checkbox']} />
+                        </div>
+                      </td>
 
-                  <td className={styles['table__data']}>
-                    <div className={styles['product']}>
-                      <Image
-                        src={require('@/assets/images/test/cake.png')}
-                        alt=''
-                        className={styles['product__image']}
-                      />
-                      <p className={styles['product__title']}>{index.title}</p>
-                    </div>
-                  </td>
+                      <td className={styles['table__data']}>
+                        <div className={styles['product']}>
+                          {/* <Image
+                            src={require('@/assets/images/test/cake.png')}
+                            alt=''
+                            className={styles['product__image']}
+                          /> */}
+                          <img src={index.preview} alt="img" className={styles['product__image']}/>
+                          <p className={styles['product__title']}>{index.name}</p>
+                        </div>
+                      </td>
 
-                  <td className={styles['table__data']}>
-                    <div className={styles['product']}>
-                      <p className={styles['product__name']}>Кондитерская “Hani”</p>
-                    </div>
-                  </td>
+                      {/* <td className={styles['table__data']}>
+                        <div className={styles['product']}>
+                          <p className={styles['product__name']}>Кондитерская “Hani”</p>
+                        </div>
+                      </td> */}
 
-                  <td className={styles['table__data']} align='right'>
-                    <div className={styles['product']}>
-                      <p className={styles['product__name']}>1 кг</p>
-                    </div>
-                  </td>
+                      {/* <td className={styles['table__data']} align='right'>
+                        <div className={styles['product']}>
+                          <p className={styles['product__name']}>1 кг</p>
+                        </div>
+                      </td> */}
 
-                  <td className={styles['table__data']} align='right'>
-                    <div className={styles['product']}>
-                      <p className={styles['product__name']}>{index.price}</p>
-                    </div>
-                  </td>
-                  <td>
-                    <p>На складе: {index.inStock}</p>
-                  </td>
+                      <td className={styles['table__data']} align='right'>
+                        <div className={styles['product']}>
+                          <p className={styles['product__name']}>На складе:</p>
+                        </div>
+                      </td>
 
-                  <td className={styles['table__data']} align='center'>
-                    <div className={styles['product']}>
-                      <Counter className={styles['product__counter']} product={index} defaultCount={index.count} />
-                    </div>
-                  </td>
+                      <td className={styles['table__data']} align='center'>
+                        <div className={styles['product']}>
+                          <Counter
+                            className={styles['product__counter']}
+                            product={index}
+                            defaultCount={index.count}
+                          />
+                        </div>
+                      </td>
 
-                  <td className={styles['table__data']}>
-                    <div className={styles['product']}>
-                      <button onClick={() => deleteItem(index)} className={styles['product__delete-action']}>
-                        <TrashIcon/>
-                        <span >Удалить</span>
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
+                      <td className={styles['table__data']}>
+                        <div className={styles['product']}>
+                          <button
+                            onClick={() => deleteItem(index)}
+                            className={styles['product__delete-action']}
+                          >
+                            <TrashIcon />
+                            <span>Удалить</span>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </>
+              ) : (
+                <>loadingg</>
+              )}
             </tbody>
           </table>
         </div>
@@ -173,13 +218,13 @@ export function CartScreen({ onSubmit, onBack }: CartScreenProps) {
         <div className={styles['result']}>
           <div className={styles['result-header']}>
             <p className={styles['result-header__title']}>Ваша корзина</p>
-            <p className={styles['result-header__result']}>3 товара, 3 кг</p>
+            <p className={styles['result-header__result']}>{cartSize} товара, 3 кг</p>
           </div>
 
           <div className={styles['result-main']}>
             <ul className={styles['result-main__list']}>
               <li className={styles['result-main__item']}>
-                <span>Товары (3)</span>
+                <span>Товары ({cartSize})</span>
                 <span>700 000 ₸</span>
               </li>
             </ul>
@@ -196,8 +241,7 @@ export function CartScreen({ onSubmit, onBack }: CartScreenProps) {
               <ArrowRightIcon />
             </button>
 
-            <div className={styles['result-main__banner']}>
-            </div>
+            <div className={styles['result-main__banner']}></div>
           </div>
         </div>
       </div>

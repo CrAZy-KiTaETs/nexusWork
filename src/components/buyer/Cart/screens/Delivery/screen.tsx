@@ -24,7 +24,7 @@ import { MapIcon } from '@/assets/icons/Map';
 export function DeliveryScreen({ onSubmit, onBack }: DeliveryScreenProps) {
   const [nav, setNav] = useState<Nav>('Самовывоз');
   const [selectedDeliveryAddress, setSelectedDeliveryAddress] = useState<boolean>(true);
-  const addresses = ['Ержанова 43', 'Бухар-жырау, 53', 'Ерубаева 50/3','Ержанова 43', 'Бухар-жырау, 53', 'Ерубаева 50/3', 'Ержанова 43', 'Бухар-жырау, 53', 'Ерубаева 50/3', 'Ержанова 43', 'Бухар-жырау, 53', 'Ерубаева 50/3'];
+  const addresses = ['Ержанова 43', 'Бухар-жырау, 53', 'Ерубаева 50/3','Улица Казахстанская, 1', "Улица Сатпаева, 120 ", "Улица Абая, 61/2 "];
 
   return (
     <>
@@ -159,7 +159,7 @@ export function DeliveryScreen({ onSubmit, onBack }: DeliveryScreenProps) {
                 </div>
                 <div className={styles['delivery-points']}>
                   {addresses.map((x) => (
-                    <Card key={x} title='100004 Отделение КазПочты' />
+                    <Card key={x} title={x} />
                   ))}
                 </div>
 
@@ -264,7 +264,7 @@ export function DeliveryScreen({ onSubmit, onBack }: DeliveryScreenProps) {
           </div>
 
           <div className={styles['map']} id='mapContainer'>
-            <MyMap addresses={addresses} />
+            {/* <MyMap addresses={addresses} /> */}
           </div>
         </div>
       </div>
